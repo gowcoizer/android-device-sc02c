@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-DEVICE=galaxys2
-COMMON=c1-common
+DEVICE=sc02c
+COMMON=sc02c-common
 MANUFACTURER=samsung
 
 if [[ -z "${ANDROIDFS_DIR}" && -d ../../../backup-${DEVICE}/system ]]; then
@@ -62,7 +62,7 @@ case "$DEVICE_BUILD_ID" in
   echo ZSLPG >&2
   echo XWLPD >&2
   echo XWLPI >&2
-  exit 1 ;;
+#  exit 1 ;;
 esac
 
 if [[ ! -d ../../../backup-${DEVICE}/system  && -z "${ANDROIDFS_DIR}" ]]; then
@@ -82,10 +82,10 @@ do
     mkdir -p $PROPRIETARY_COMMON_DIR/$NAME
 done
 
-# galaxys2
+# sc02c
 
 
-# c1-common
+# sc02c-common
 (cat << EOF) | sed s/__DEVICE__/$DEVICE/g | sed s/__MANUFACTURER__/$MANUFACTURER/g > ../../../vendor/$MANUFACTURER/$DEVICE/$DEVICE-vendor-blobs.mk
 # Copyright (C) 2010 The Android Open Source Project
 #
@@ -104,7 +104,7 @@ done
 # Prebuilt libraries that are needed to build open-source libraries
 PRODUCT_COPY_FILES := \\
 
-# All the blobs necessary for galaxys2 devices
+# All the blobs necessary for sc02c devices
 PRODUCT_COPY_FILES += \\
 
 EOF
@@ -129,7 +129,7 @@ COMMON_BLOBS_LIST=../../../vendor/$MANUFACTURER/$COMMON/c1-vendor-blobs.mk
 # Prebuilt libraries that are needed to build open-source libraries
 PRODUCT_COPY_FILES := device/sample/etc/apns-full-conf.xml:system/etc/apns-conf.xml
 
-# All the blobs necessary for galaxys2 devices
+# All the blobs necessary for sc02c devices
 PRODUCT_COPY_FILES += \\
 EOF
 
@@ -153,7 +153,13 @@ copy_file()
     fi
 
     if [[ -f $PROPRIETARY_COMMON_DIR/$4/$2 ]]; then
-        echo   $BASE_PROPRIETARY_COMMON_DIR/$4/$2:$3/$2 \\ >> $COMMON_BLOBS_LIST
+
+        if [ "$4" = "" ]; then
+            echo   $BASE_PROPRIETARY_COMMON_DIR/$2:$3/$2 \\ >> $COMMON_BLOBS_LIST
+        else
+            echo   $BASE_PROPRIETARY_COMMON_DIR/$4/$2:$3/$2 \\ >> $COMMON_BLOBS_LIST
+        fi
+
     else
         echo Failed to pull $1. Giving up.
         exit -1
@@ -257,7 +263,7 @@ COMMON_EGL="
 	"
 copy_files "$COMMON_EGL" "system/lib/egl" "egl"
 
-if [ $FIRMWARE = "XXLPQ" ] || [ $FIRMWARE = "XWLP7" ];
+if [ "$FIRMWARE" = "XXLPQ" ] || [ "$FIRMWARE" = "XWLP7" ];
 then
 COMMON_FIRMWARE="
 	RS_M5LS_TB.bin
@@ -305,26 +311,19 @@ COMMON_WIFI="
 	bcm4330_p2p.bin
 	bcm4330_sta.bin
 	nvram_mfg.txt
+	nvram_mfg.txt_murata
 	nvram_net.txt
-	nvram_net.txt_AU
-	nvram_net.txt_IL
 	nvram_net.txt_murata
-	nvram_net.txt_murata_AU
-	nvram_net.txt_murata_IL
-	nvram_net.txt_murata_SG
-	nvram_net.txt_murata_TN
-	nvram_net.txt_SG
-	nvram_net.txt_TN
 	wpa_supplicant.conf
 	"
 copy_files "$COMMON_WIFI" "system/etc/wifi" "wifi"
 
 COMMON_AUDIO="
 	libasound.so
+	libmediayamahaservice.so
 	libsamsungSoundbooster.so
 	libsamsungAcousticeq.so
 	libsoundalive.so
-	libsoundspeed.so
 	libaudiohw.so
 	libmediayamaha.so
 	libmediayamahaservice.so

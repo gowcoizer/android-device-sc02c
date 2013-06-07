@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-DEVICE=galaxys2
-COMMON=c1-common
+DEVICE=sc02c
+COMMON=sc02c-common
 MANUFACTURER=samsung
 
 mkdir -p ../../../vendor/$MANUFACTURER/$DEVICE
